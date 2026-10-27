@@ -51,3 +51,24 @@ Raw Dataset
 ## KPI
 
 `value / revenue per data asset`
+
+## Quick Start
+
+```bash
+npm install
+npm run dev   # http://localhost:5173
+npm run build # dist/
+```
+
+Deploys on Vercel: connect the repo, set framework to Vite, output directory `dist`.
+
+## Screens
+
+| Screen | Route | Description |
+|---|---|---|
+| Dashboard | `/` | Summary tiles, recent activity, navigate to inventory |
+| Inventory | `/inventory` | Searchable, filterable list of 8 demo data assets |
+| Asset Detail | `/asset/:id` | Quality ring, pipeline tracker, tabbed detail, submit for approval |
+| 404 | `*` | Not found page |
+
+Bilingual Arabic (RTL, default) / English toggle. All demo data is static — no external API calls.
