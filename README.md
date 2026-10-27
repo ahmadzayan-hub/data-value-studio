@@ -2,6 +2,8 @@
 
 ## Product Authority
 
+<p align="center"><img src="docs/assets/hero.jpg" alt="Concept image (AI-generated). Not a product screenshot." width="100%"><br><sub><em>Concept image (AI-generated). Not a product screenshot.</em></sub></p>
+
 | | |
 |---|---|
 | **Primary User** | Data owner / governance lead |
