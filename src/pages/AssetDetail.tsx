@@ -4,6 +4,8 @@ import { ArrowLeft, ArrowRight, CheckCircle, Circle } from 'lucide-react';
 import { DEMO_ASSETS, PIPELINE_STEPS } from '../data/assets';
 import { QualityRing } from '../components/QualityRing';
 import { Toast } from '../components/Toast';
+import { evaluatePrivacyRule } from '../governance/privacyRule';
+import { reasonText, VERDICT_LABELS } from '../governance/privacyDisplay';
 
 interface Props { lang: 'ar' | 'en' }
 
@@ -37,6 +39,8 @@ export function AssetDetail({ lang }: Props) {
   ];
 
   const BackIcon = ar ? ArrowRight : ArrowLeft;
+  const privacy = evaluatePrivacyRule(asset);
+  const verdict = VERDICT_LABELS[privacy.verdict];
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -67,6 +71,19 @@ export function AssetDetail({ lang }: Props) {
             {ar ? classLabels[asset.classification] : asset.classification}
           </span>
         </div>
+      </div>
+
+      {/* Privacy review */}
+      <div
+        data-testid="privacy-review"
+        className={`border rounded-2xl p-5 mb-6 ${verdict.classes}`}
+      >
+        <h2 className="font-semibold mb-1">{ar ? 'مراجعة الخصوصية' : 'Privacy review'}: {ar ? verdict.ar : verdict.en}</h2>
+        {privacy.reasons.length > 0 && (
+          <ul className="list-disc ps-5 text-base space-y-1">
+            {privacy.reasons.map(r => <li key={r}>{reasonText(r, ar)}</li>)}
+          </ul>
+        )}
       </div>
 
       {/* Pipeline */}
@@ -151,7 +168,8 @@ export function AssetDetail({ lang }: Props) {
       <div className="mt-6 flex justify-end">
         <button
           onClick={() => setToast(true)}
-          className="bg-navy hover:bg-navy-light text-white font-semibold px-6 py-3 rounded-xl transition-colors shadow-sm"
+          disabled={privacy.verdict === 'blocked'}
+          className="bg-navy enabled:hover:bg-navy-light text-white font-semibold px-6 py-3 rounded-xl transition-colors shadow-sm disabled:bg-gray-200 disabled:text-gray-600 disabled:shadow-none disabled:cursor-not-allowed"
         >
           {ar ? 'تقديم للموافقة' : 'Submit for Approval'}
         </button>
