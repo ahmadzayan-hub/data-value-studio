@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Dashboard } from './pages/Dashboard';
 import { Inventory } from './pages/Inventory';
 import { AssetDetail } from './pages/AssetDetail';
 import { NotFound } from './pages/NotFound';
+
+const Router = import.meta.env.MODE === 'pages' ? HashRouter : BrowserRouter;
 
 export default function App() {
   const [lang, setLang] = useState<'ar' | 'en'>('ar');
@@ -17,7 +19,7 @@ export default function App() {
   const toggle = () => setLang(l => l === 'ar' ? 'en' : 'ar');
 
   return (
-    <BrowserRouter>
+    <Router>
       <div className="min-h-screen bg-gray-50">
         <Header lang={lang} onToggleLang={toggle} />
         <main>
@@ -29,6 +31,6 @@ export default function App() {
           </Routes>
         </main>
       </div>
-    </BrowserRouter>
+    </Router>
   );
 }
