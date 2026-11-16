@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CheckCircle, Circle } from 'lucide-react';
-import { DEMO_ASSETS, PIPELINE_STEPS } from '../data/assets';
+import { ASSET_STATUS_AR, DEMO_ASSETS, PIPELINE_STEPS, PRIVACY_EXAMPLES } from '../data/assets';
 import { QualityRing } from '../components/QualityRing';
-import { Toast } from '../components/Toast';
-import { evaluatePrivacyRule } from '../governance/privacyRule';
-import { reasonText, VERDICT_LABELS } from '../governance/privacyDisplay';
+import { PrivacyReview } from '../components/PrivacyReview';
+import { NotFound } from './NotFound';
 
 interface Props { lang: 'ar' | 'en' }
 
@@ -24,13 +23,9 @@ export function AssetDetail({ lang }: Props) {
   const navigate = useNavigate();
   const ar = lang === 'ar';
   const [tab, setTab] = useState<Tab>('overview');
-  const [toast, setToast] = useState(false);
 
-  const asset = DEMO_ASSETS.find(a => a.id === id);
-  if (!asset) {
-    navigate('/not-found');
-    return null;
-  }
+  const asset = DEMO_ASSETS.find(a => a.id === id) ?? PRIVACY_EXAMPLES.find(a => a.id === id);
+  if (!asset) return <NotFound lang={lang} />;
 
   const tabs: { key: Tab; labelAr: string; labelEn: string }[] = [
     { key: 'overview', labelAr: 'نظرة عامة', labelEn: 'Overview' },
@@ -39,23 +34,9 @@ export function AssetDetail({ lang }: Props) {
   ];
 
   const BackIcon = ar ? ArrowRight : ArrowLeft;
-  const privacy = evaluatePrivacyRule(asset);
-  const verdict = VERDICT_LABELS[privacy.verdict];
-  const guidance = {
-    ok: ar ? 'راجع تفاصيل الأصل ثم عاين طلب الموافقة.' : 'Review the asset details and preview the approval request.',
-    needs_review: ar ? 'أرفق أدلة المراجعة المطلوبة قبل نشر الأصل.' : 'Provide the required review evidence before publishing.',
-    blocked: ar ? 'أعد الأصل إلى المسودة وراجع التصنيف مع مسؤول الحوكمة.' : 'Return the asset to draft and review its classification with your governance lead.',
-  }[privacy.verdict];
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      {toast && (
-        <Toast
-          message={ar ? 'هذه معاينة للطلب. لم تُحفظ أي بيانات.' : 'This is a request preview. No data was saved.'}
-          onClose={() => setToast(false)}
-        />
-      )}
-
       <button
         onClick={() => navigate('/inventory')}
         className="flex items-center gap-2 text-sm text-gray-500 hover:text-navy mb-6 transition-colors"
@@ -78,27 +59,7 @@ export function AssetDetail({ lang }: Props) {
         </div>
       </div>
 
-      {/* Privacy review */}
-      <div
-        data-testid="privacy-review"
-        className={`border rounded-2xl p-5 mb-6 ${verdict.classes}`}
-      >
-        <h2 className="font-semibold mb-1">{ar ? 'مراجعة الخصوصية' : 'Privacy review'}: {ar ? verdict.ar : verdict.en}</h2>
-        {privacy.reasons.length > 0 && (
-          <ul className="list-disc ps-5 text-base space-y-1">
-            {privacy.reasons.map(r => <li key={r}>{reasonText(r, ar)}</li>)}
-          </ul>
-        )}
-        <p id="approval-next-step" className="mt-3 text-base leading-6">{guidance}</p>
-        <button
-          onClick={() => setToast(true)}
-          disabled={privacy.verdict === 'blocked'}
-          aria-describedby="approval-next-step"
-          className="mt-3 rounded-xl bg-navy px-6 py-3 font-semibold text-white shadow-sm transition-colors enabled:hover:bg-navy-light disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600 disabled:shadow-none"
-        >
-          {ar ? 'معاينة طلب الموافقة' : 'Preview approval request'}
-        </button>
-      </div>
+      <PrivacyReview key={asset.id} asset={asset} lang={lang} />
 
       {/* Pipeline */}
       <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm mb-6">
@@ -139,9 +100,12 @@ export function AssetDetail({ lang }: Props) {
               <p className="text-sm text-gray-700">{ar ? asset.descriptionAr : asset.descriptionEn}</p>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div><span className="text-gray-400">{ar ? 'المالك:' : 'Owner:'}</span> <span className="font-medium">{asset.owner}</span></div>
-                <div><span className="text-gray-400">{ar ? 'آخر تحديث:' : 'Updated:'}</span> <span className="font-medium">{asset.lastUpdated}</span></div>
-                <div><span className="text-gray-400">{ar ? 'الحالة:' : 'Status:'}</span> <span className="font-medium">{ar ? asset.status : asset.status}</span></div>
-                <div><span className="text-gray-400">{ar ? 'خطوات مكتملة:' : 'Steps done:'}</span> <span className="font-medium">{asset.pipelineStepsCompleted} / {PIPELINE_STEPS.length}</span></div>
+                <div>
+                  <span className="text-gray-500">{ar ? 'آخر تحديث:' : 'Updated:'}</span>{' '}
+                  <time dir="ltr" className="inline-block font-medium" dateTime={asset.lastUpdated}>{asset.lastUpdated}</time>
+                </div>
+                <div><span className="text-gray-500">{ar ? 'الحالة:' : 'Status:'}</span> <span className="font-medium">{ar ? ASSET_STATUS_AR[asset.status] : asset.status}</span></div>
+                <div><span className="text-gray-500">{ar ? 'خطوات مكتملة:' : 'Steps done:'}</span> <bdi dir="ltr" className="font-medium">{asset.pipelineStepsCompleted} / {PIPELINE_STEPS.length}</bdi></div>
               </div>
             </div>
           )}
@@ -177,7 +141,6 @@ export function AssetDetail({ lang }: Props) {
           )}
         </div>
       </div>
-
     </div>
   );
 }

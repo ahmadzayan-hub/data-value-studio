@@ -62,6 +62,12 @@ npm run build # dist/
 
 Deploys on Vercel: connect the repo, set framework to Vite, output directory `dist`.
 
+### GitHub Pages demo
+
+Set **Settings → Pages → Source** to **GitHub Actions**, then run **CI** on
+`main`. The publish job runs after verification and uses hash routes so a
+static host can open and reload an asset link directly.
+
 ## Privacy browser tests
 
 ```bash
@@ -69,7 +75,7 @@ npx playwright install --only-shell chromium
 npm run test:e2e
 ```
 
-The tests add synthetic records in the browser session and exercise the asset detail route in Arabic and English. Set `PRIVACY_SCREENSHOTS=1` when running the suite to capture full-page PNGs in `test-results/`.
+The tests use the three synthetic examples in Inventory and exercise the asset detail route in Arabic and English. Set `PRIVACY_SCREENSHOTS=1` when running the suite to capture full-page PNGs in `test-results/`.
 If Chromium is already installed, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to its executable path.
 
 ## Screens
@@ -78,15 +84,17 @@ If Chromium is already installed, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to its ex
 |---|---|---|
 | Dashboard | `/` | Summary tiles, recent activity, navigate to inventory |
 | Inventory | `/inventory` | Searchable, filterable list of 8 demo data assets |
-| Asset Detail | `/asset/:id` | Quality ring, pipeline tracker, tabbed detail, submit for approval |
+| Asset Detail | `/asset/:id` | Quality ring, pipeline tracker, privacy guidance and a demo approval request |
 | 404 | `*` | Not found page |
 
-Bilingual Arabic (RTL, default) / English toggle. All demo data is static — no external API calls.
+Bilingual Arabic (RTL, default) / English toggle. The demo saves one pending
+request per asset in the current browser, including the request time, privacy
+verdict, reasons and rule version. Demo requests use synthetic records and have
+no shared reviewer or backend.
 
-### Approval requests
+### Managed approval requests
 
-The demo asset screen previews the request and its next step. A managed
-deployment can apply the Supabase migration and supply a catalogue of
+A managed deployment can apply the Supabase migration and supply a catalogue of
 revisioned assets associated with verified owners. It exposes the following
 authenticated PostgREST call. Use the signed-in user's access token and the
 project's publishable key.
@@ -99,4 +107,5 @@ POST /rest/v1/rpc/request_asset_approval
 The database evaluates the current classification and rejects unauthorized,
 blocked or stale requests. A retry returns the same receipt. The receipt
 captures the revision, requester, UTC timestamp, rule version and reasons.
-The demo screen does not connect to a managed account or database.
+A managed deployment still needs to connect authentication and its asset
+catalogue to the application before it can use this endpoint.

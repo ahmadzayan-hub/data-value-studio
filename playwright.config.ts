@@ -1,6 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
-const baseURL = 'http://127.0.0.1:4173';
+const pagesURL = process.env.PLAYWRIGHT_PAGES_URL;
+const baseURL = pagesURL ?? 'http://127.0.0.1:4173';
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -17,7 +18,7 @@ export default defineConfig({
       use: { viewport: { width: 360, height: 800 }, isMobile: true, hasTouch: true },
     },
   ],
-  webServer: {
+  webServer: pagesURL ? undefined : {
     command: 'npm run dev -- --host 127.0.0.1 --port 4173 --strictPort',
     url: baseURL,
   },
