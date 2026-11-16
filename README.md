@@ -91,3 +91,21 @@ Bilingual Arabic (RTL, default) / English toggle. The demo saves one pending
 request per asset in the current browser, including the request time, privacy
 verdict, reasons and rule version. Demo requests use synthetic records and have
 no shared reviewer or backend.
+
+### Managed approval requests
+
+A managed deployment can apply the Supabase migration and supply a catalogue of
+revisioned assets associated with verified owners. It exposes the following
+authenticated PostgREST call. Use the signed-in user's access token and the
+project's publishable key.
+
+```text
+POST /rest/v1/rpc/request_asset_approval
+{"p_asset_id":"asset-id","p_asset_revision":1}
+```
+
+The database evaluates the current classification and rejects unauthorized,
+blocked or stale requests. A retry returns the same receipt. The receipt
+captures the revision, requester, UTC timestamp, rule version and reasons.
+A managed deployment still needs to connect authentication and its asset
+catalogue to the application before it can use this endpoint.
