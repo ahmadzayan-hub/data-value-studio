@@ -101,7 +101,7 @@ export function PrivacyReview({ asset, lang }: { asset: DataAsset; lang: 'ar' | 
             onClick={saveRequest}
             disabled={blocked || state.status === 'loading' || state.status === 'saving'}
             aria-describedby="approval-next-step"
-            className="mt-3 rounded-xl bg-navy px-5 py-3 font-semibold text-white transition-colors enabled:hover:bg-navy-light disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600"
+            className="mt-3 rounded-xl bg-navy px-5 py-3 font-semibold text-white enabled:hover:bg-navy-light disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600"
           >
             {state.status === 'saving'
               ? (ar ? 'جارٍ حفظ الطلب…' : 'Saving request…')
