@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
-import { DEMO_ASSETS, Classification, AssetStatus } from '../data/assets';
+import { ASSET_STATUS_AR, DEMO_ASSETS, PRIVACY_EXAMPLES, type Classification, type AssetStatus } from '../data/assets';
 
 interface Props { lang: 'ar' | 'en' }
 
@@ -22,13 +22,6 @@ const classLabels: Record<Classification, { ar: string }> = {
   Public: { ar: 'عام' },
   Confidential: { ar: 'سري' },
   Restricted: { ar: 'مقيد' },
-};
-
-const statusLabels: Record<AssetStatus, { ar: string }> = {
-  Draft: { ar: 'مسودة' },
-  Reviewed: { ar: 'تمت المراجعة' },
-  Approved: { ar: 'موافق عليه' },
-  Published: { ar: 'منشور' },
 };
 
 export function Inventory({ lang }: Props) {
@@ -56,6 +49,24 @@ export function Inventory({ lang }: Props) {
           {ar ? `${visible.length} أصل بيانات` : `${visible.length} assets`}
         </p>
       </div>
+
+      <section aria-labelledby="privacy-examples" className="mb-6 rounded-2xl border border-gray-200 bg-white p-4">
+        <h2 id="privacy-examples" className="font-semibold text-navy">
+          {ar ? 'جرّب مراجعة الخصوصية' : 'Try the privacy review'}
+        </h2>
+        <ul className="mt-2 grid gap-2 sm:grid-cols-3">
+          {PRIVACY_EXAMPLES.map(asset => (
+            <li key={asset.id}>
+              <Link
+                to={`/asset/${asset.id}`}
+                className="block rounded-lg bg-gray-50 px-3 py-3 font-medium text-navy hover:bg-gray-100"
+              >
+                {ar ? asset.nameAr : asset.nameEn}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
@@ -85,7 +96,7 @@ export function Inventory({ lang }: Props) {
         >
           <option value="All">{ar ? 'كل الحالات' : 'All Statuses'}</option>
           {(['Draft', 'Reviewed', 'Approved', 'Published'] as AssetStatus[]).map(s => (
-            <option key={s} value={s}>{ar ? statusLabels[s].ar : s}</option>
+            <option key={s} value={s}>{ar ? ASSET_STATUS_AR[s] : s}</option>
           ))}
         </select>
       </div>
@@ -113,7 +124,7 @@ export function Inventory({ lang }: Props) {
                     {ar ? classLabels[a.classification].ar : a.classification}
                   </span>
                   <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[a.status]}`}>
-                    {ar ? statusLabels[a.status].ar : a.status}
+                    {ar ? ASSET_STATUS_AR[a.status] : a.status}
                   </span>
                 </div>
               </div>

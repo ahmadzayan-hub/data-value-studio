@@ -1,6 +1,13 @@
 export type Classification = 'Public' | 'Confidential' | 'Restricted';
 export type AssetStatus = 'Draft' | 'Reviewed' | 'Approved' | 'Published';
 
+export const ASSET_STATUS_AR: Record<AssetStatus, string> = {
+  Draft: 'مسودة',
+  Reviewed: 'تمت المراجعة',
+  Approved: 'معتمد',
+  Published: 'منشور',
+};
+
 export interface DataAsset {
   id: string;
   nameEn: string;
@@ -129,6 +136,42 @@ export const DEMO_ASSETS: DataAsset[] = [
     descriptionEn: 'International and domestic visitor counts by nationality and season.',
     descriptionAr: 'أعداد الزوار الدوليين والمحليين حسب الجنسية والموسم.',
     pipelineStepsCompleted: 4,
+  },
+];
+
+const privacyExample = {
+  status: 'Published',
+  qualityScore: 80,
+  owner: 'Demo governance',
+  lastUpdated: '2026-11-01',
+  descriptionEn: 'Synthetic record for exercising the privacy review and approval request.',
+  descriptionAr: 'سجل اصطناعي لتجربة مراجعة الخصوصية وطلب الموافقة.',
+} as const;
+
+export const PRIVACY_EXAMPLES: DataAsset[] = [
+  {
+    ...privacyExample,
+    id: 'privacy-ok',
+    nameEn: 'Synthetic public asset',
+    nameAr: 'أصل عام اصطناعي',
+    classification: 'Public',
+    pipelineStepsCompleted: 7,
+  },
+  {
+    ...privacyExample,
+    id: 'privacy-needs-review',
+    nameEn: 'Synthetic confidential asset',
+    nameAr: 'أصل سري اصطناعي',
+    classification: 'Confidential',
+    pipelineStepsCompleted: 1,
+  },
+  {
+    ...privacyExample,
+    id: 'privacy-blocked',
+    nameEn: 'Synthetic restricted asset',
+    nameAr: 'أصل مقيّد اصطناعي',
+    classification: 'Restricted',
+    pipelineStepsCompleted: 7,
   },
 ];
 
