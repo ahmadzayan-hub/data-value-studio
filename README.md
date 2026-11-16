@@ -62,6 +62,16 @@ npm run build # dist/
 
 Deploys on Vercel: connect the repo, set framework to Vite, output directory `dist`.
 
+## Privacy browser tests
+
+```bash
+npx playwright install --only-shell chromium
+npm run test:e2e
+```
+
+The tests add synthetic records in the browser session and exercise the asset detail route in Arabic and English. Set `PRIVACY_SCREENSHOTS=1` when running the suite to capture full-page PNGs in `test-results/`.
+If Chromium is already installed, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to its executable path.
+
 ## Screens
 
 | Screen | Route | Description |

@@ -80,7 +80,7 @@ export function AssetDetail({ lang }: Props) {
       >
         <h2 className="font-semibold mb-1">{ar ? 'مراجعة الخصوصية' : 'Privacy review'}: {ar ? verdict.ar : verdict.en}</h2>
         {privacy.reasons.length > 0 && (
-          <ul className="list-disc ps-5 text-sm space-y-1">
+          <ul className="list-disc ps-5 text-base space-y-1">
             {privacy.reasons.map(r => <li key={r}>{reasonText(r, ar)}</li>)}
           </ul>
         )}
@@ -169,7 +169,7 @@ export function AssetDetail({ lang }: Props) {
         <button
           onClick={() => setToast(true)}
           disabled={privacy.verdict === 'blocked'}
-          className="bg-navy hover:bg-navy-light text-white font-semibold px-6 py-3 rounded-xl transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-navy enabled:hover:bg-navy-light text-white font-semibold px-6 py-3 rounded-xl transition-colors shadow-sm disabled:bg-gray-200 disabled:text-gray-600 disabled:shadow-none disabled:cursor-not-allowed"
         >
           {ar ? 'تقديم للموافقة' : 'Submit for Approval'}
         </button>
