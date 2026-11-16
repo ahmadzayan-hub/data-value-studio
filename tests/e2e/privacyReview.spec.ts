@@ -223,7 +223,9 @@ test('concurrent requests from two tabs keep the same saved record', async ({ pa
   const anotherTab = await context.newPage();
   const assetRoute = route('/asset/privacy-ok');
   await Promise.all([page.goto(assetRoute), anotherTab.goto(assetRoute)]);
-  await Promise.all([page, anotherTab].map(tab => tab.getByRole('button', { name: copy.ar.action }).click()));
+  const actions = [page, anotherTab].map(tab => tab.getByRole('button', { name: copy.ar.action, exact: true }));
+  await Promise.all(actions.map(action => expect(action).toBeEnabled()));
+  await Promise.all(actions.map(action => action.click()));
 
   const receipts = [page, anotherTab].map(tab => tab.getByRole('status'));
   for (const receipt of receipts) await expect(receipt.getByText(copy.ar.confirmation)).toBeVisible();
