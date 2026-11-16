@@ -74,14 +74,14 @@ const copy = {
   ar: {
     direction: 'rtl',
     panel: 'مراجعة الخصوصية',
-    action: 'تقديم للموافقة',
-    confirmation: 'تم إرسال طلب الموافقة بنجاح',
+    action: 'معاينة طلب الموافقة',
+    confirmation: 'هذه معاينة للطلب. لم تُحفظ أي بيانات.',
   },
   en: {
     direction: 'ltr',
     panel: 'Privacy review',
-    action: 'Submit for Approval',
-    confirmation: 'Approval request submitted successfully',
+    action: 'Preview approval request',
+    confirmation: 'This is a request preview. No data was saved.',
   },
 };
 

@@ -41,12 +41,17 @@ export function AssetDetail({ lang }: Props) {
   const BackIcon = ar ? ArrowRight : ArrowLeft;
   const privacy = evaluatePrivacyRule(asset);
   const verdict = VERDICT_LABELS[privacy.verdict];
+  const guidance = {
+    ok: ar ? 'راجع تفاصيل الأصل ثم عاين طلب الموافقة.' : 'Review the asset details and preview the approval request.',
+    needs_review: ar ? 'أرفق أدلة المراجعة المطلوبة قبل نشر الأصل.' : 'Provide the required review evidence before publishing.',
+    blocked: ar ? 'أعد الأصل إلى المسودة وراجع التصنيف مع مسؤول الحوكمة.' : 'Return the asset to draft and review its classification with your governance lead.',
+  }[privacy.verdict];
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {toast && (
         <Toast
-          message={ar ? 'تم إرسال طلب الموافقة بنجاح' : 'Approval request submitted successfully'}
+          message={ar ? 'هذه معاينة للطلب. لم تُحفظ أي بيانات.' : 'This is a request preview. No data was saved.'}
           onClose={() => setToast(false)}
         />
       )}
@@ -84,6 +89,15 @@ export function AssetDetail({ lang }: Props) {
             {privacy.reasons.map(r => <li key={r}>{reasonText(r, ar)}</li>)}
           </ul>
         )}
+        <p id="approval-next-step" className="mt-3 text-base leading-6">{guidance}</p>
+        <button
+          onClick={() => setToast(true)}
+          disabled={privacy.verdict === 'blocked'}
+          aria-describedby="approval-next-step"
+          className="mt-3 rounded-xl bg-navy px-6 py-3 font-semibold text-white shadow-sm transition-colors enabled:hover:bg-navy-light disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600 disabled:shadow-none"
+        >
+          {ar ? 'معاينة طلب الموافقة' : 'Preview approval request'}
+        </button>
       </div>
 
       {/* Pipeline */}
@@ -164,16 +178,6 @@ export function AssetDetail({ lang }: Props) {
         </div>
       </div>
 
-      {/* Submit for approval */}
-      <div className="mt-6 flex justify-end">
-        <button
-          onClick={() => setToast(true)}
-          disabled={privacy.verdict === 'blocked'}
-          className="bg-navy enabled:hover:bg-navy-light text-white font-semibold px-6 py-3 rounded-xl transition-colors shadow-sm disabled:bg-gray-200 disabled:text-gray-600 disabled:shadow-none disabled:cursor-not-allowed"
-        >
-          {ar ? 'تقديم للموافقة' : 'Submit for Approval'}
-        </button>
-      </div>
     </div>
   );
 }
